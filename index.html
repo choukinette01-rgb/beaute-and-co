@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2c6d0">
+<title>Beauté & Co</title>
+<style>
+:root{--rose:#eab4c1;--pale:#fff0f3;--ink:#30272b;--muted:#80747a;--line:#eee1e5;--bg:#fffaf9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:#fffdfc;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.brand{font:26px Georgia,serif}.brand small{display:block;font:9px Arial;letter-spacing:2px;margin-top:2px}
+main{max-width:900px;margin:auto;padding:17px 15px 100px}
+.hero{padding:23px;border-radius:23px;background:linear-gradient(135deg,#fae2e8,#f7e9dc);margin-bottom:18px}
+.hero h1{font:30px Georgia,serif;margin:0 0 8px}.hero p{color:#655b60;margin:0;line-height:1.4}
+.row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+button{font:inherit;border:0;cursor:pointer}.btn{background:var(--rose);color:#34272c;padding:11px 15px;border-radius:20px;font-weight:650}.btn.light{background:#fff;border:1px solid var(--line)}
+h2{font:23px Georgia,serif;margin:23px 0 12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 8px;text-align:center}.stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.toolbar{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:12px;padding:11px;background:white;color:var(--ink);width:100%}
+.toolbar input{flex:1;min-width:150px}.chips{display:flex;gap:7px;overflow:auto;padding:4px 0 13px}.chip{background:#f4ecee;padding:8px 13px;border-radius:18px;white-space:nowrap}.chip.on{background:var(--rose);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:white;border:1px solid var(--line);border-radius:17px;overflow:hidden;position:relative}.card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f5e9ec;display:block}.cardbody{padding:10px}.cardbody b{display:block}.muted{color:var(--muted);font-size:12px;margin-top:4px}.heart{position:absolute;right:8px;top:8px;background:white;border-radius:50%;width:34px;height:34px;font-size:18px}
+.empty{border:1px dashed #d9c8ce;border-radius:18px;padding:28px;text-align:center;color:var(--muted);line-height:1.5}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:7px 3px calc(7px + env(safe-area-inset-bottom));z-index:10}
+nav button{background:none;color:#6f6268;font-size:11px;padding:6px 5px;min-width:58px}nav button span{display:block;font-size:19px;margin-bottom:3px}nav button.active{color:#ad6277;font-weight:800}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end;justify-content:center}.modal.show{display:flex}.sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:650px;max-height:92vh;overflow:auto;padding:20px 18px calc(25px + env(safe-area-inset-bottom))}
+.sheethead{display:flex;justify-content:space-between;align-items:center}.sheet h2{margin:0 0 14px}.field{margin:12px 0}.field label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}.field textarea{min-height:72px}.preview{width:100%;max-height:190px;object-fit:contain;border-radius:12px;margin-top:8px;background:#faf4f5}
+.close{background:#f5e9ec;border-radius:50%;width:34px;height:34px;font-size:20px}
+.combo select{margin:6px 0}.result{padding:12px;border-radius:13px;background:#fff2f5;margin-top:10px}
+.tv{display:none;position:fixed;inset:0;background:#171316;color:white;z-index:30;overflow:auto;padding:25px 14px}.tv.show{display:block}.tv h1{text-align:center;font:34px Georgia,serif}.tv .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tv .card{background:#2a2328;color:white;border:0}.tv .muted{color:#ddd}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.tv .grid{grid-template-columns:repeat(4,minmax(0,1fr))}.modal{align-items:center}.sheet{border-radius:22px}}
+</style>
+</head>
+<body>
+<header><div class="brand">Beauté & Co<small>ONGLES & NAIL ART</small></div><button class="btn" onclick="openForm()">＋ Ajouter</button></header>
+<main id="app"></main>
+<nav>
+<button class="active" data-tab="home" onclick="tab('home',this)"><span>⌂</span>Accueil</button>
+<button data-tab="colors" onclick="tab('colors',this)"><span>🎨</span>Couleurs</button>
+<button data-tab="decos" onclick="tab('decos',this)"><span>✨</span>Décos</button>
+<button data-tab="creations" onclick="tab('creations',this)"><span>💅</span>Créations</button>
+<button onclick="showTV()"><span>▣</span>Mode cliente</button>
+</nav>
+<div class="modal" id="modal"><div class="sheet">
+<div class="sheethead"><h2 id="formTitle">Ajouter au catalogue</h2><button class="close" onclick="closeForm()">×</button></div>
+<div class="field"><label>Type</label><select id="fType"><option value="color">Couleur / gel</option><option value="deco">Décoration</option><option value="creation">Création / modèle cliente</option></select></div>
+<div class="field"><label>Nom</label><input id="fName" placeholder="Ex. Rose nude 023"></div>
+<div class="field"><label>Catégorie</label><input id="fCat" placeholder="Nude, paillettes, chrome, stickers…"></div>
+<div class="field"><label>Marque / référence (facultatif)</label><input id="fBrand" placeholder="Marque ou numéro"></div>
+<div class="field"><label>Photo (appareil photo ou photothèque)</label><input id="fPhoto" type="file" accept="image/*" capture="environment"><img id="preview" class="preview" hidden></div>
+<div class="field"><label>Notes / idées d'associations</label><textarea id="fNotes" placeholder="Ex. avec paillettes dorées, French blanche…"></textarea></div>
+<button class="btn" style="width:100%" onclick="saveItem()">Enregistrer</button>
+</div></div>
+<div class="tv" id="tv"><button class="btn light" onclick="hideTV()">Fermer ✕</button><h1>Beauté & Co — Inspirations</h1><div id="tvItems" class="grid"></div></div>
+<script>
+const DB='beauteandco_mobile_v2';let items=[],current='home',filter='Toutes',photoData='',editId=null;
+const $=id=>document.getElementById(id);
+function openDB(){return new Promise((resolve,reject)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('items',{keyPath:'id'});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function load(){try{let db=await openDB();let tx=db.transaction('items','readonly');let req=tx.objectStore('items').getAll();req.onsuccess=()=>{items=req.result;render()}}catch(e){items=[];render()}}
+async function put(x){let db=await openDB();return new Promise((res,rej)=>{let tx=db.transaction('items','readwrite');tx.objectStore('items').put(x);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+async function del(id){let db=await openDB();return new Promise(res=>{let tx=db.transaction('items','readwrite');tx.objectStore('items').delete(id);tx.oncomplete=res})}
+function esc(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function image(x){return x.photo||'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="100%" height="100%" fill="#f6e8ec"/><text x="50%" y="53%" text-anchor="middle" font-size="85">${x.type==='color'?'🎨':x.type==='deco'?'✨':'💅'}</text></svg>`)}
+function card(x){return `<article class="card"><img src="${image(x)}"><button class="heart" onclick="fav('${x.id}')">${x.favorite?'♥':'♡'}</button><div class="cardbody"><b>${esc(x.name)}</b><div class="muted">${esc(x.brand||x.category||'')}</div><div class="muted">${esc(x.category||'')}</div><div style="display:flex;gap:8px;margin-top:10px"><button class="chip" onclick="editItem('${x.id}')">Modifier</button><button class="chip" onclick="removeItem('${x.id}')">Supprimer</button></div></div></article>`}
+function tab(t,el){current=t;filter='Toutes';document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');render()}
+function render(){
+ let a='';
+ if(current==='home'){
+ a=`<section class="hero"><h1>Ton dressing d'onglerie ✨</h1><p>Retrouve tes gels, tes décorations et tes idées de Nail Art pour les montrer à tes clientes.</p><div class="row"><button class="btn" onclick="openForm()">📷 Ajouter une photo</button><button class="btn light" onclick="tab('ideas')">Créer une association</button></div></section>
+ <div class="stats"><div class="stat"><b>${items.filter(x=>x.type==='color').length}</b><span>Couleurs & gels</span></div><div class="stat"><b>${items.filter(x=>x.type==='deco').length}</b><span>Décos</span></div><div class="stat"><b>${items.filter(x=>x.type==='creation').length}</b><span>Créations</span></div></div>
+ <h2>Derniers ajouts</h2>${items.length?`<div class="grid">${items.slice(0,4).map(card).join('')}</div>`:'<div class="empty">Ton catalogue est prêt ! Ajoute une photo de ton premier gel ou de ta première décoration.</div>'}
+ <h2>Associer mes produits</h2><button class="btn" onclick="tab('ideas')">✨ Composer une idée Nail Art</button>`;
+ }else if(current==='ideas'){
+ let colors=items.filter(x=>x.type==='color'),decos=items.filter(x=>x.type==='deco');
+ a=`<h2>Composer une idée Nail Art</h2><p class="muted">Choisis une couleur et une ou plusieurs décorations de ton stock.</p><div class="combo"><label>Couleur / gel</label><select id="pickColor"><option value="">Choisir une couleur</option>${colors.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><label>Décoration</label><select id="pickDeco"><option value="">Choisir une décoration</option>${decos.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><label>Deuxième décoration (facultatif)</label><select id="pickDeco2"><option value="">Aucune</option>${decos.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><button class="btn" style="width:100%;margin-top:10px" onclick="compose()">Créer l'association</button><div id="comboResult"></div></div>`;
+ }else{
+ let type=current==='colors'?'color':current==='decos'?'deco':'creation',subset=items.filter(x=>x.type===type);
+ let cats=['Toutes',...new Set(subset.map(x=>x.category).filter(Boolean))];
+ a=`<h2>${current==='colors'?'Mes couleurs & gels':current==='decos'?'Mes décorations':'Mes créations'}</h2><div class="toolbar"><input id="search" placeholder="Rechercher…" oninput="renderList()"><button class="btn" onclick="openForm('${type}')">＋ Ajouter</button></div><div class="chips">${cats.map(c=>`<button class="chip ${filter===c?'on':''}" onclick="filter='${esc(c)}';render()">${esc(c)}</button>`).join('')}</div><div id="list" class="grid">${listHTML(subset)}</div>`;
+ }
+ $('app').innerHTML=a;
+}
+function listHTML(arr){let q=($('search')?.value||'').toLowerCase();return arr.filter(x=>(filter==='Toutes'||x.category===filter)&&(!q||(x.name+' '+x.category+' '+x.brand+' '+x.notes).toLowerCase().includes(q))).map(card).join('')||'<div class="empty" style="grid-column:1/-1">Aucun élément ici. Appuie sur « Ajouter » pour commencer.</div>'}
+function renderList(){let type=current==='colors'?'color':current==='decos'?'deco':'creation';$('list').innerHTML=listHTML(items.filter(x=>x.type===type))}
+function openForm(type){editId=null;photoData='';$('formTitle').textContent='Ajouter au catalogue';$('fType').value=type||'color';['fName','fCat','fBrand','fNotes'].forEach(id=>$(id).value='');$('fPhoto').value='';$('preview').hidden=true;$('modal').classList.add('show')}
+function closeForm(){$('modal').classList.remove('show')}
+$('fPhoto').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{photoData=r.result;$('preview').src=photoData;$('preview').hidden=false};r.readAsDataURL(f)});
+async function saveItem(){let x={id:editId||crypto.randomUUID(),type:$('fType').value,name:$('fName').value.trim()||'Sans nom',category:$('fCat').value.trim()||'Autre',brand:$('fBrand').value.trim(),notes:$('fNotes').value.trim(),photo:photoData,favorite:editId?!!items.find(i=>i.id===editId)?.favorite:false};if(editId&&!photoData)x.photo=items.find(i=>i.id===editId)?.photo||'';await put(x);closeForm();await load()}
+function editItem(id){let x=items.find(i=>i.id===id);editId=id;photoData=x.photo||'';$('formTitle').textContent='Modifier';$('fType').value=x.type;$('fName').value=x.name;$('fCat').value=x.category;$('fBrand').value=x.brand;$('fNotes').value=x.notes;$('fPhoto').value='';$('preview').hidden=!photoData;if(photoData)$('preview').src=photoData;$('modal').classList.add('show')}
+async function removeItem(id){if(confirm('Supprimer cet élément ?')){await del(id);await load()}}
+async function fav(id){let x=items.find(i=>i.id===id);x.favorite=!x.favorite;await put(x);await load()}
+function compose(){let ids=[$('pickColor').value,$('pickDeco').value,$('pickDeco2').value].filter(Boolean),selected=ids.map(id=>items.find(x=>x.id===id)).filter(Boolean);$('comboResult').innerHTML=selected.length?`<div class="result"><b>Ton association :</b><div class="grid" style="margin-top:9px">${selected.map(x=>`<div><img src="${image(x)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px"><div class="muted">${esc(x.name)}</div></div>`).join('')}</div><button class="btn" style="margin-top:12px" onclick="saveCombo()">Enregistrer comme création</button></div>`:'<p class="muted">Choisis au moins une couleur ou décoration.'}
+function saveCombo(){let ids=[$('pickColor').value,$('pickDeco').value,$('pickDeco2').value].filter(Boolean),names=ids.map(id=>items.find(x=>x.id===id)?.name).filter(Boolean);openForm('creation');$('fName').value=names.join(' + ');$('fCat').value='Association Nail Art';$('fNotes').value='Produits utilisés : '+names.join(', ')}
+function showTV(){$('tv').classList.add('show');$('tvItems').innerHTML=items.filter(x=>x.type==='creation'||x.type==='color').map(card).join('')||'<p>Ajoute des photos pour les présenter ici.</p>'}
+function hideTV(){$('tv').classList.remove('show')}
+load();
+</script>
+</body></html>
